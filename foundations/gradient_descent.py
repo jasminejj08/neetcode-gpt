@@ -7,7 +7,7 @@ class Solution:
 
         # if num iterations = 0; return initial value unchanged
         if iterations == 0: 
-            return init
+            return round(init, 5)
         # otherwise repeat update rule for num of iterations
         else:
             for i in range(iterations):
