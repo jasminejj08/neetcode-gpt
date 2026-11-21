@@ -10,8 +10,8 @@ class Solution:
         # return np.round(your_answer, 4)
 
         z = z - np.max(z)
-        print(z)
-        softmax = (np.exp(z)) / np.sum(np.exp(z))
+        # print(z)
+        probs = (np.exp(z)) / np.sum(np.exp(z))
 
         ## return a ndarray
-        return np.round(softmax, 4)
+        return np.round(probs, 4)
