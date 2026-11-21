@@ -22,11 +22,11 @@ class Solution:
 
         n = len(ground_truth)
 
-        sum = 0
-        for i in range(n):
-            sum += (model_prediction[i] - ground_truth[i])**2
+        # sum = 0
+        # for i in range(n):
+        #     sum += (model_prediction[i] - ground_truth[i])**2
         
-        mse = (sum/n)[0]
+        # mse = (sum/n)[0]
 
         mse_np = (np.sum(np.power(model_prediction - ground_truth, 2))) / n
         
