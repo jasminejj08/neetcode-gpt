@@ -28,6 +28,7 @@ class Solution:
         
         mse = (sum/n)[0]
 
+        mse_np = (np.sum(np.power(model_prediction - ground_truth, 2))) / n
         
         ## return float
-        return np.round(mse, 5)
+        return np.round(mse_np, 5)
