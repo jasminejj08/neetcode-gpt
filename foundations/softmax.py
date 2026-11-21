@@ -15,3 +15,7 @@ class Solution:
 
         ## return a ndarray
         return np.round(probs, 4)
+
+        softmax([1000, 1000])
+
+
