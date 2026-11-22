@@ -26,7 +26,7 @@ class Solution:
         # Return np.round(final_weights, 5)
 
 
-        print("shape of X: ", X.shape)
+        # print("shape of X: ", X.shape)
 
         ## loop/update while num iterations greater than 0
         while num_iterations > 0:
