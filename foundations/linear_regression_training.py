@@ -25,21 +25,25 @@ class Solution:
         #   3. Update: weights[j] -= learning_rate * gradient
         # Return np.round(final_weights, 5)
 
+
+        print("shape of X: ", X.shape)
+
         ## loop/update while num iterations greater than 0
         while num_iterations > 0:
 
             ## forward pass (predict y)
             pred_y = self.get_model_prediction(X, initial_weights)
-            print("pred length:", len(pred_y)) ## should be = 2 since 2 samples in X 
+            # print("pred length:", len(pred_y)) ## should be = 2 since 2 samples in X 
 
             ## go through each weight and adjust it (get the error for that weight)
             for j in range(len(initial_weights)):
                 grad = self.get_derivative(pred_y, Y, len(Y), X, j)
 
-                print("grad", grad)
+                # print("grad", grad)
                 ## update weights
                 initial_weights[j] -= self.learning_rate * grad
 
+            ## decrease number of iterations otherwise loop will run forever 
             num_iterations -= 1
 
 
