@@ -21,7 +21,7 @@ class Solution:
         y_hat = 1 / (1 + np.exp(-z))
 
         ## compute loss
-        loss = 1/2 * (y_hat - y_true)**2
+        loss = 1/2 * (y_hat - y_true)**2 ## not used 
 
         ## compute gradients
         ## dl/dw = dl/dy_hat * dy_hat/dz * dz / dw
@@ -29,7 +29,7 @@ class Solution:
 
         b_grad = np.round(((y_hat - y_true) * y_hat*(1 - y_hat)), 5)
 
-        print("w_grad: ", w_grad, "dtype: ", w_grad.dtype)
-        print("b_grad: ", b_grad, "dtype: ", b_grad.dtype)
+        # print("w_grad: ", w_grad, "dtype: ", w_grad.dtype)
+        # print("b_grad: ", b_grad, "dtype: ", b_grad.dtype)
 
         return (w_grad, b_grad)
