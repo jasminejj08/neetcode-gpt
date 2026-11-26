@@ -28,18 +28,18 @@ class Solution:
         ## formula: h[i] = ReLU(h[i-1] @ W[i] + b[i])
         ## looping over array; starting with h = x
 
-        h = x
-
+        h_i = x
+        
         for i in range(len(biases)):
-            z = h @ weights[i] + biases[i]
+            W_i = weights[i]
+            b_i = biases[i]
 
+            h_i = h_i @ W_i + b_i
 
             if i != len(biases)-1:
-                h = np.maximum(0, z)
-            else:
-                h = z
+                h_i = np.maximum(0, h_i)
 
-        return np.round(h, 5)  
+        return np.round(h_i, 5)  
 
 
 
