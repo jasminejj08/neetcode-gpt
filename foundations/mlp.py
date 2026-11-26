@@ -31,10 +31,7 @@ class Solution:
         h = x
 
         for i in range(len(biases)):
-            W_i = weights[i]
-            b_i = biases[i]
-
-            z = h @ W_i + b_i
+            z = h @ weights[i] + biases[i]
 
 
             if i != len(biases)-1:
