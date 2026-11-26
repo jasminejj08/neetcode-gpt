@@ -30,81 +30,63 @@ class Solution:
         ## store output as dictionary
         output = {}
 
-        ## 1. calculate forward pass
-        
-        ## 2 neurons in first hidden layer (2x2 W1); x dim = (2,)
-        print('dim of W1, x: ', W1.shape, x.shape)
-        Z1 = (x@(W1.T)) + b1 # (2x2)*(2,) + (2,)
+        ## step 1: forward pass
+        z1 = (x@(W1.T)) + b1
 
-        ## apply activation function relu
-        a1 = np.maximum(0, Z1) # (2,)
+        a1 = np.maximum(0, z1)
 
-        ## second hidden layer
-        Z2 = (a1@(W2.T)) + b2 # (1x2)*(2,) + (1,) --> (1,) (get a single value)
+        z2 = (a1@(W2.T)) + b2
 
-        ## Z2 = y_hat
-        ## 2. calculate loss; n = 1
-        L = np.mean((Z2 - y_true)**2)
+        L = np.mean((z2 - y_true)**2)
+
+        print('done forward pass\n: ')
+        print('z1: ', z1, '\tshape: ', z1.shape)
+        print('a1: ', a1, '\tshape: ', a1.shape)
+        print('z2: ', z2, '\tshape: ', z2.shape)
+        print('L: ', L, '\tshape: ', L.shape)
+
 
         output['loss'] = np.round(L, 4)
 
-        print('DONE FORWARD PASS')
-        print('shapes: ', Z1.shape, a1.shape, Z2.shape, L.shape)
+
+        ## step 2: backpropagate; calculate weight gradients
+        ## go backwards from L to z1
+        ## dL/dz2 ==> used for db2, dW2, da1
+        ## dL/da1 ==> used for dz1
+        ## dL/dz1 ==> used for db1, dW1
+
+        d_z2 = (2*(z2 - y_true)) / len(y_true)
+
+        d_b2 = d_z2 
+
+        ## dz2/dW2 = a1 ; dL/dW2 = dz2 * a1 
+        ## W2 has shape (1x2) so gradient dW2 must be (1x2) --> 1 row 2 cols (2D); 
+        ## z2 has shape (1,); a1 has shape = z1 = (2,) \\ both 1D, use np.outer (or reshape)
+        d_W2 = np.outer(d_z2, a1) # should get shape (1, 2)
+
+        ## dz2/da1 = W2 ; dL/da1 = dz2 * W2
+        ## a1 has shape (2,); da1 must have (2,)
+        ## W2 shape = (1x2), z2 shape = (1, ) \\ 2D, 1D; np converts 1D into row
+        ## temp d_z2 shape = (1,1) @ (1,2) --> (1,2) --> drop added dim ==> (2,)
+        d_a1 = d_z2 @ W2
 
 
-        ## 3. backpropagate for gradients
-        print('STARTING BACKPROP')
-
-        ## starting at last neuron Z2
-        ## dL/dZ2; L = (Z2 - y_true)^2
-        n = len(y_true)
-        d_Z2 = 2*(Z2 - y_true) / len(y_true) # shape (1,)
-        print('Z2 shape: ', Z2.shape, 'y_true shape: ', y_true.shape)
-        print('d_Z2 shape: ', d_Z2.shape)
-
-        ## dL/db2 = dL/dZ2 * dZ2/db2
-        # already have dL/dZ2 ==> global derivative
-        # need local derivative dZ2/db2 = 1
-        d_b2 = d_Z2 * 1 # shape (1,)
-
-        ## dL/dW2 = dL/dZ2 * dZ2/dW2
-        # local derivative dZ2/dW2 = a1; a1 shape (2,); global deriv shape (1,)
-        # so put local deriv * global deriv so inner shapes line up
-        # d_W2 = a1 * d_Z2 # shape (2,)
-        d_W2 = np.outer(d_Z2, a1)
-        print('d_W2 shape: ', d_W2.shape)
+        ## da1/dz1 = deriv of relu func = 0 if z1 < 0, 1 if z1 > 0
+        ## dL/dz1 = dl/da1 * da1/dz1
+        ##  ReLU is applied independently to each neuron (1-to-1), so its derivative must be multiplied element-by-element (*), not as an outer product (np.outer, which turns your 1D (2,) vector into a 2D (2, 2) matrix!).
+        d_relu = (z1 > 0).astype(float) # a true/false arr 
+        d_z1 =  d_a1 * d_relu
 
 
-        ## dL/da1 = dL/dZ2 * dZ2/da1
-        # local deriv dZ2/da1 = W1; shape (2x2)
-        # global grad shape (2,)
-        print('W2 shape: ', W2.shape)
-        # d_a1 = W2 * d_Z2 # shape (2x2)
-        d_a1 = d_Z2 @ W2
-        print('d_a1 shape: ', d_a1.shape)
-
-
-        ## dL/dZ1 = dL/dZ2 * dZ2/da1 * da1/dZ1
-        # local deriv da1/dZ1 = deriv of relu func = 0 if f'(x) < 0, 1 if f'(x) > 0
-        mask = (Z1 > 0).astype(float)
-        # r_prime = Z1 * mask
-        # r_prime shape (2,) (local); d_a1 = (2x2)
-        d_Z1 = d_a1 * mask
-
-
-
-        ## dL/db1 = dL/dZ2 * dZ2/da1 * da1/dZ1 * dZ1/db1
-        # local deriv dZ1/db1 = 1
-        d_b1 = 1 * d_Z1 # shape = (2,) * (2x2) = 
+        ## dz1/db1
+        d_b1 = d_z1
 
         
-        ## dL/dW1 = dL/dZ2 * dZ2/da1 * da1/dZ1 * dZ1/dW1
-        # local deriv dZ1/dW1 = x
-        # x shape: (2,) 
-        print('x: ', x, 'shape: ', x.shape)
-        print('d_z1:', d_Z1, 'shape', d_Z1.shape)
-        # d_W1 = x * d_Z1
-        d_W1 = np.outer(d_Z1, x)
+        ## dz1/dW1 = x
+        ## x has shape (2,), z1 has shape (2,) \\ 1D, 1D, use outer
+        ## z1 needs to be rows (neurons), x needs to be cols (inputs)
+        d_W1 = np.outer(d_z1, x)
+        
 
         output['dW1'] = np.round(d_W1, 4).tolist()
         output['db1'] = np.round(d_b1, 4).tolist()
