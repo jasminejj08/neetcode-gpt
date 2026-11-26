@@ -31,10 +31,8 @@ class Solution:
         h_i = x
         
         for i in range(len(biases)):
-            W_i = weights[i]
-            b_i = biases[i]
 
-            h_i = h_i @ W_i + b_i
+            h_i = h_i @ weights[i] + biases[i]
 
             if i != len(biases)-1:
                 h_i = np.maximum(0, h_i)
