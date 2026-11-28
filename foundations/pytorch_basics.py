@@ -8,9 +8,11 @@ class Solution:
         # Reshape (M, N) tensor to (M*N/2, 2)
         # Use torch.reshape(tensor, new_shape)
 
-        s = list(to_reshape.shape)
+        # s = list(to_reshape.shape)
 
-        new_shape = int((s[0] * s[1]) / 2)
+        # new_shape = int((s[0] * s[1]) / 2)
+
+        new_shape = (to_reshape.shape[0] * to_reshape.shape[1]) // 2
         t = torch.reshape(to_reshape, (new_shape, 2))
 
         return torch.round(t, decimals=4)
